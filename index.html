@@ -186,6 +186,15 @@
         .btn-secondary { background: #f5f5f5; color: #333; }
         .btn-secondary:hover { background: #e0e0e0; }
 
+        /* 정렬 버튼 */
+        .sort-btn {
+            padding: 5px 12px; margin-right: 5px; border: 1px solid #ddd;
+            border-radius: 15px; background: white; cursor: pointer; font-size: 11px;
+        }
+        .sort-btn.active { background: #6200ea; color: white; border-color: #6200ea; }
+        .sort-btn:hover { background: #f0f0f0; }
+        .sort-btn.active:hover { background: #4a00b0; }
+
         /* ============ 테이블 뷰 ============ */
         .table-view {
             background: white;
@@ -358,6 +367,12 @@
 
         <!-- ============ 테이블 뷰 ============ -->
         <div class="table-view" id="tableView">
+            <div class="sort-buttons" style="margin-bottom:10px;">
+                <span style="font-size:12px;margin-right:8px;">정렬:</span>
+                <button class="sort-btn active" onclick="sortTable('default')">기본</button>
+                <button class="sort-btn" onclick="sortTable('price')">비용순</button>
+                <button class="sort-btn" onclick="sortTable('area')">면적순</button>
+            </div>
             <div class="table-scroll">
                 <table class="data-table">
                     <thead>
@@ -488,10 +503,6 @@
                         <span class="badge badge-green">내부화장실(남녀분리)</span>
                         <span class="badge badge-blue">🪞 전신거울</span>
                     </div>
-                    <div class="source-info">
-                        <strong>📋 시설정보 (출처: 사당하이퍼.html:43-52)</strong><br>
-                        "내부 화장실" + "남/여 화장실 구분" | 전신거울 있음
-                    </div>
                     <div class="owner-appeal">
                         <strong>🏠 주인장 어필:</strong> 사당역 5분 초역세권 대형 파티룸, 취사시설/음향/마이크/TV프로젝터/WIFI 완비
                     </div>
@@ -530,10 +541,6 @@
                         <span class="badge badge-purple">🅿️ 주차1대</span>
                         <span class="badge badge-blue">🪞 전신거울</span>
                     </div>
-                    <div class="source-info">
-                        <strong>📋 시설정보 (출처: 오션스타.html:37-38)</strong><br>
-                        "내부 화장실" | 전신거울 있음 | 주차 1대 가능
-                    </div>
                     <div class="owner-appeal">
                         <strong>🏠 주인장 어필:</strong> "사당역 5분거리 파티룸 🎉 노래방/TV프로젝터/냉난방/취사/음향 완비, 별도 라운지 공간"
                     </div>
@@ -571,10 +578,6 @@
                         <span class="badge badge-blue">🪞 전신거울</span>
                         <span class="badge badge-purple">🅿️ 주차1대</span>
                     </div>
-                    <div class="source-info">
-                        <strong>📋 시설정보 (출처: [80명가능초대형].html:38-46)</strong><br>
-                        "내부 화장실" + "남/여 화장실 구분" | 전신거울 있음 | 주차 1대 가능
-                    </div>
                     <div class="owner-appeal">
                         <strong>🏠 주인장 어필:</strong> "80명 수용 가능 초대형 파티룸, 100인치 프로젝터, 풀컬러 조명 맛집, 음향/마이크/WIFI 완비"
                     </div>
@@ -609,10 +612,6 @@
                         <span class="badge badge-blue">추가인원비 5,000원</span>
                         <span class="badge badge-green">내부화장실</span>
                         <span class="badge badge-blue">🪞 전신거울</span>
-                    </div>
-                    <div class="source-info">
-                        <strong>📋 시설정보 (출처: 더무드.html:57-59)</strong><br>
-                        "내부 화장실" | 전신거울 있음
                     </div>
                     <div class="owner-appeal">
                         <strong>🏠 주인장 어필:</strong> "사당역 초역세권, 감성 조명과 커튼이 만들어내는 다양한 무드, 그리고 완벽한 음향·조리 시설까지 — 당신의 모임이 더욱 특별해지는 공간입니다✨"
@@ -650,11 +649,6 @@
                         <span class="badge badge-orange">외부화장실(남녀공용)*</span>
                         <span class="badge badge-blue">🪞 전신거울</span>
                     </div>
-                    <div class="source-info">
-                        <strong>📋 시설정보 (출처: 골든아워.html:39-46)</strong><br>
-                        스페이스클라우드: "내부 화장실" + "남/여 화장실 구분" | 전신거울 있음<br>
-                        <em>*사용자 확인 결과: 외부(남녀공용)으로 표기</em>
-                    </div>
                     <div class="owner-appeal">
                         <strong>🏠 주인장 어필:</strong> "대형 모임을 위한 파티룸, JBL 파티박스 스피커, 마이크 4개, 디제잉 가능, 소음 완전 자유, 누적 3000명 이용"
                     </div>
@@ -688,10 +682,6 @@
                     <div class="badges">
                         <span class="badge badge-purple">🔊 소음자유</span>
                         <span class="badge badge-blue">🎤 노래방</span>
-                    </div>
-                    <div class="source-info">
-                        <strong>📋 시설정보</strong><br>
-                        소스 파일 없음 - 스페이스클라우드에서 직접 확인 필요
                     </div>
                     <div class="owner-appeal">
                         <strong>🏠 주인장 어필:</strong> "소음 완전 자유! 노래방 기계 완비. 대규모 파티/모임 가능"
@@ -862,6 +852,43 @@
         document.getElementById('lightbox').addEventListener('click', (e) => {
             if (e.target.id === 'lightbox') closeLightbox();
         });
+
+        // 테이블 정렬
+        const originalOrder = [];
+        document.querySelectorAll('.data-table tbody tr').forEach((row, i) => {
+            originalOrder.push({row, index: i});
+        });
+
+        function sortTable(type) {
+            const tbody = document.querySelector('.data-table tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (type === 'default') {
+                originalOrder.forEach(item => tbody.appendChild(item.row));
+            } else if (type === 'price') {
+                rows.sort((a, b) => {
+                    const priceA = parseInt(a.querySelector('.price-cell').textContent.replace(/[^0-9]/g, ''));
+                    const priceB = parseInt(b.querySelector('.price-cell').textContent.replace(/[^0-9]/g, ''));
+                    return priceA - priceB;
+                });
+                rows.forEach(row => tbody.appendChild(row));
+            } else if (type === 'area') {
+                rows.sort((a, b) => {
+                    const areaA = parseInt(a.cells[5].textContent.replace(/[^0-9]/g, ''));
+                    const areaB = parseInt(b.cells[5].textContent.replace(/[^0-9]/g, ''));
+                    return areaB - areaA;
+                });
+                rows.forEach(row => tbody.appendChild(row));
+            }
+
+            // 번호 업데이트
+            tbody.querySelectorAll('tr').forEach((row, i) => {
+                row.cells[0].textContent = i + 1;
+            });
+        }
     </script>
 </body>
 </html>
