@@ -342,10 +342,25 @@
             font-weight: 600;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .cards { grid-template-columns: 1fr; }
+            .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .data-table { font-size: 11px; min-width: 900px; }
+            .data-table th, .data-table td { padding: 8px 6px; white-space: nowrap; }
+            .data-table td:nth-child(11) { white-space: normal; min-width: 150px; }
+            .thumb-cell img { width: 50px; height: 50px; }
+            .sort-buttons { padding: 0.5rem 1rem !important; }
+            .sort-btn { padding: 4px 8px; font-size: 10px; }
+            h1 { font-size: 22px; }
+            .subtitle { font-size: 12px; }
+            .view-toggle { flex-wrap: wrap; gap: 5px; }
+            .view-btn { padding: 8px 12px; font-size: 12px; }
+        }
+        @media (max-width: 480px) {
             .data-table { font-size: 10px; }
-            .data-table th, .data-table td { padding: 8px 4px; }
+            .data-table th, .data-table td { padding: 6px 4px; }
+            .thumb-cell img { width: 40px; height: 40px; }
+            .notes { font-size: 11px; padding: 10px 15px; }
         }
     </style>
 </head>
