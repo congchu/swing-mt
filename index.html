@@ -346,156 +346,146 @@
 
         <!-- 뷰 토글 버튼 -->
         <div class="view-toggle">
-            <button class="view-btn active" onclick="showView('card')">📋 카드로 보기</button>
-            <button class="view-btn" onclick="showView('table')">📊 표로 보기</button>
+            <button class="view-btn" onclick="showView('card')">📋 카드로 보기</button>
+            <button class="view-btn active" onclick="showView('table')">📊 표로 보기</button>
         </div>
 
         <!-- ============ 테이블 뷰 ============ -->
-        <div class="table-view hidden" id="tableView">
+        <div class="table-view" id="tableView">
             <div class="table-scroll">
                 <table class="data-table">
                     <thead>
                         <tr>
                             <th>썸네일</th>
-                            <th>점수</th>
                             <th>공간명</th>
                             <th>35인 비용</th>
                             <th>가능시간</th>
-                            <th>면적</th>
-                            <th>최대인원</th>
+                            <th>면적/인원</th>
+                            <th>리뷰/찜</th>
                             <th>교통</th>
                             <th>화장실</th>
                             <th>거울</th>
                             <th>주차</th>
-                            <th>특징</th>
+                            <th>블로그</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td class="thumb-cell"><img src="images/사당하이퍼_1.jpg" onclick="openLightbox('사당하이퍼', 0)"></td>
-                            <td class="score-cell">92</td>
-                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/75247" target="_blank">🥇 사당하이퍼</a></td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/75247" target="_blank">사당하이퍼</a></td>
                             <td class="price-cell">340,000원</td>
-                            <td><span class="badge-sm badge-blue">낮 10~17</span><span class="badge-sm badge-purple">올나잇 19~7</span></td>
-                            <td>75평</td>
-                            <td>99+명</td>
-                            <td>5분</td>
+                            <td><span class="badge-sm badge-purple">19~7시</span></td>
+                            <td>75평/99+명</td>
+                            <td>리뷰0/찜57</td>
+                            <td>사당역 5분</td>
                             <td><span class="badge-sm badge-green">내부(남녀분리)</span></td>
                             <td>✅</td>
                             <td>❓</td>
-                            <td><span class="badge-sm badge-orange">최저가</span><span class="badge-sm badge-purple">최대규모</span></td>
+                            <td><a href="https://blog.naver.com/unuyoonu/224138055982" target="_blank">📝</a></td>
                         </tr>
                         <tr>
                             <td class="thumb-cell"><img src="images/오션스타_1.jpg" onclick="openLightbox('오션스타', 0)"></td>
-                            <td class="score-cell">82</td>
-                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/14887" target="_blank">🥈 오션스타</a></td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/14887" target="_blank">오션스타</a></td>
                             <td class="price-cell">420,000원</td>
-                            <td><span class="badge-sm badge-blue">낮 12~17</span><span class="badge-sm badge-purple">밤 19~10</span></td>
-                            <td>45평</td>
-                            <td>60명</td>
-                            <td>5분</td>
-                            <td><span class="badge-sm badge-green">내부</span></td>
+                            <td><span class="badge-sm badge-purple">19~10시</span></td>
+                            <td>45평/60명</td>
+                            <td>리뷰44/찜1027</td>
+                            <td>사당역 5분</td>
+                            <td><span class="badge-sm badge-green">내부(남녀공용)</span></td>
                             <td>✅</td>
                             <td>✅</td>
-                            <td><span class="badge-sm badge-green">찜1027</span><span class="badge-sm badge-blue">노래방</span></td>
+                            <td><a href="https://blog.naver.com/pran0104/221599137743" target="_blank">📝</a></td>
                         </tr>
                         <tr>
                             <td class="thumb-cell"><img src="images/80명초대형_1.jpg" onclick="openLightbox('80명초대형', 0)"></td>
-                            <td class="score-cell">77</td>
-                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/76825" target="_blank">🥉 80명초대형</a></td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/76825" target="_blank">80명초대형</a></td>
                             <td class="price-cell">450,000원</td>
-                            <td><span class="badge-sm badge-blue">낮 12~17</span><span class="badge-sm badge-purple">올나잇 19~6</span></td>
-                            <td>40평</td>
-                            <td>80명</td>
-                            <td>5분</td>
+                            <td><span class="badge-sm badge-purple">19~6시</span></td>
+                            <td>40평/80명</td>
+                            <td>리뷰0/찜0</td>
+                            <td>사당역 5분</td>
                             <td><span class="badge-sm badge-green">내부(남녀분리)</span></td>
                             <td>✅</td>
                             <td>✅</td>
-                            <td><span class="badge-sm badge-blue">신규</span><span class="badge-sm badge-purple">100인치</span></td>
+                            <td>-</td>
                         </tr>
                         <tr>
                             <td class="thumb-cell"><img src="images/더무드_1.jpg" onclick="openLightbox('더무드', 0)"></td>
-                            <td class="score-cell">70</td>
                             <td class="name-cell"><a href="https://www.spacecloud.kr/space/74668" target="_blank">더무드</a></td>
                             <td class="price-cell">425,000원</td>
-                            <td><span class="badge-sm badge-purple">올나잇 18~8</span></td>
-                            <td>30평</td>
-                            <td>60명</td>
-                            <td>3분</td>
-                            <td><span class="badge-sm badge-green">내부</span></td>
+                            <td><span class="badge-sm badge-purple">18~8시</span></td>
+                            <td>30평/60명</td>
+                            <td>리뷰2/찜32</td>
+                            <td>사당역 3분</td>
+                            <td><span class="badge-sm badge-green">내부(남녀공용)</span></td>
                             <td>✅</td>
                             <td>❌</td>
-                            <td><span class="badge-sm badge-blue">추가5천원</span></td>
+                            <td>-</td>
                         </tr>
                         <tr>
                             <td class="thumb-cell"><img src="images/골든아워_1.jpg" onclick="openLightbox('골든아워', 0)"></td>
-                            <td class="score-cell">65</td>
                             <td class="name-cell"><a href="https://www.spacecloud.kr/space/56837" target="_blank">골든아워</a></td>
                             <td class="price-cell">440,000원</td>
-                            <td><span class="badge-sm badge-purple">19~24</span><span class="badge-sm badge-orange">24시운영</span></td>
-                            <td>35평</td>
-                            <td>99+명</td>
-                            <td>3분</td>
-                            <td><span class="badge-sm badge-orange">외부*</span></td>
+                            <td><span class="badge-sm badge-purple">19~8시</span></td>
+                            <td>35평/99+명</td>
+                            <td>리뷰20/찜174</td>
+                            <td>사당역 3분</td>
+                            <td><span class="badge-sm badge-orange">외부(남녀공용)</span></td>
                             <td>✅</td>
                             <td>❌</td>
-                            <td><span class="badge-sm badge-purple">소음자유</span><span class="badge-sm badge-blue">JBL</span></td>
+                            <td>-</td>
                         </tr>
                         <tr>
                             <td class="thumb-cell"><img src="images/소음자유노래방_1.jpg" onclick="openLightbox('소음자유노래방', 0)"></td>
-                            <td class="score-cell">65?</td>
                             <td class="name-cell"><a href="https://www.spacecloud.kr/space/53057" target="_blank">소음자유노래방</a></td>
                             <td class="price-cell">439,000원</td>
-                            <td><span class="badge-sm badge-orange">확인필요</span></td>
-                            <td>30평</td>
-                            <td>60명</td>
-                            <td>3분</td>
+                            <td><span class="badge-sm badge-purple">19~9시</span></td>
+                            <td>30평/60명</td>
+                            <td>리뷰51/찜427</td>
+                            <td>사당역 3분</td>
                             <td><span class="badge-sm badge-orange">확인필요</span></td>
                             <td>❓</td>
                             <td>❌</td>
-                            <td><span class="badge-sm badge-purple">소음자유</span><span class="badge-sm badge-blue">노래방</span></td>
+                            <td>-</td>
                         </tr>
                         <tr class="excluded">
                             <td class="thumb-cell"><img src="images/아이엠파티룸_1.jpg" onclick="openLightbox('아이엠파티룸', 0)"></td>
-                            <td class="score-cell">-</td>
                             <td class="name-cell"><a href="https://www.spacecloud.kr/space/67411" target="_blank">[X] 아이엠파티룸</a></td>
                             <td class="price-cell">465,000원</td>
                             <td>-</td>
-                            <td>25평</td>
-                            <td>40명</td>
-                            <td>1분</td>
+                            <td>25평/40명</td>
+                            <td>리뷰1/찜79</td>
+                            <td>내방역 1분</td>
                             <td><span class="badge-sm badge-green">내부(남녀분리)</span></td>
                             <td>✅</td>
                             <td>❌</td>
-                            <td><span class="badge-sm badge-red">작음</span></td>
+                            <td>-</td>
                         </tr>
                         <tr class="excluded">
                             <td class="thumb-cell"><img src="images/사당행_1.jpg" onclick="openLightbox('사당행', 0)"></td>
-                            <td class="score-cell">-</td>
                             <td class="name-cell"><a href="https://www.spacecloud.kr/space/61200" target="_blank">[X] 사당행</a></td>
                             <td class="price-cell">554,000원</td>
                             <td>-</td>
-                            <td>20평</td>
-                            <td>37명</td>
-                            <td>2분</td>
+                            <td>20평/37명</td>
+                            <td>리뷰5/찜234</td>
+                            <td>사당역 2분</td>
                             <td>-</td>
                             <td>✅</td>
                             <td>❌</td>
-                            <td><span class="badge-sm badge-red">비쌈</span></td>
+                            <td>-</td>
                         </tr>
                         <tr class="excluded">
                             <td class="thumb-cell"><img src="images/아일랜드이너프_1.jpg" onclick="openLightbox('아일랜드이너프', 0)"></td>
-                            <td class="score-cell">-</td>
                             <td class="name-cell"><a href="https://www.spacecloud.kr/space/27356" target="_blank">[X] 아일랜드이너프</a></td>
                             <td class="price-cell">600,000원</td>
                             <td>-</td>
-                            <td>43평</td>
-                            <td>50명</td>
-                            <td>300m</td>
+                            <td>43평/50명</td>
+                            <td>리뷰1/찜415</td>
+                            <td>사당역 300m</td>
                             <td>-</td>
                             <td>✅</td>
                             <td>❌</td>
-                            <td><span class="badge-sm badge-red">비쌈</span></td>
+                            <td>-</td>
                         </tr>
                     </tbody>
                 </table>
@@ -503,7 +493,7 @@
         </div>
 
         <!-- ============ 카드 뷰 ============ -->
-        <div class="cards" id="cardView">
+        <div class="cards hidden" id="cardView">
 
             <!-- 사당하이퍼 (92점) -->
             <div class="card cheap">
@@ -537,7 +527,7 @@
                         <div class="info-item"><span class="info-icon">👥</span><span class="info-value">99+명</span></div>
                         <div class="info-item"><span class="info-icon">📐</span><span class="info-value">248㎡ (75평)</span></div>
                         <div class="info-item"><span class="info-icon">⭐</span><span class="info-value">찜 57</span></div>
-                        <div class="info-item"><span class="info-icon">🕐</span><span class="info-value">낮 10~17시 / 올나잇 19~7시</span></div>
+                        <div class="info-item"><span class="info-icon">🕐</span><span class="info-value">19~7시</span></div>
                     </div>
                     <div class="card-review">
                         <strong>내 평가:</strong> 75평 최대 규모에 340,000원 가성비 최고! 클럽 분위기 보라/파란 조명, 벽돌 인테리어. 35명도 여유롭게 춤출 공간 충분.
@@ -582,7 +572,7 @@
                         <div class="info-item"><span class="info-icon">👥</span><span class="info-value">60명</span></div>
                         <div class="info-item"><span class="info-icon">📐</span><span class="info-value">149㎡ (45평)</span></div>
                         <div class="info-item"><span class="info-icon">💬</span><span class="info-value">리뷰 44개</span></div>
-                        <div class="info-item"><span class="info-icon">🕐</span><span class="info-value">낮 12~17시 / 밤 19~익일10시</span></div>
+                        <div class="info-item"><span class="info-icon">🕐</span><span class="info-value">19~10시</span></div>
                     </div>
                     <div class="card-review">
                         <strong>내 평가:</strong> 네이비 인테리어 + 네온사인. 45평 넓은 홀 + 별도 라운지(담요/쿠션 있어서 눕기 가능). 리뷰44 찜1027 압도적 인기!
@@ -626,7 +616,7 @@
                         <div class="info-item"><span class="info-icon">👥</span><span class="info-value">80명</span></div>
                         <div class="info-item"><span class="info-icon">📐</span><span class="info-value">132㎡ (40평)</span></div>
                         <div class="info-item"><span class="info-icon">🅿️</span><span class="info-value">주차 1대</span></div>
-                        <div class="info-item"><span class="info-icon">🕐</span><span class="info-value">낮 12~17시 / 올나잇 19~6시</span></div>
+                        <div class="info-item"><span class="info-icon">🕐</span><span class="info-value">19~6시</span></div>
                     </div>
                     <div class="card-review">
                         <strong>내 평가:</strong> 신규 오픈! 100인치 프로젝터, 풀컬러 조명 맛집. 40평에 80명 수용. 보증금 10만원 별도.
@@ -712,7 +702,7 @@
                         <div class="info-item"><span class="info-icon">👥</span><span class="info-value">99+명</span></div>
                         <div class="info-item"><span class="info-icon">📐</span><span class="info-value">116㎡ (35평)</span></div>
                         <div class="info-item"><span class="info-icon">💬</span><span class="info-value">리뷰 20개</span></div>
-                        <div class="info-item"><span class="info-icon">🕐</span><span class="info-value">19~24시 / 24시간 운영</span></div>
+                        <div class="info-item"><span class="info-icon">🕐</span><span class="info-value">19~8시</span></div>
                     </div>
                     <div class="card-review">
                         <strong>내 평가:</strong> 소음 완전 자유! JBL 파티박스 스피커, 마이크 4개. 디제잉 가능. 누적 3000명 이용. 보증금 5만원 별도.
@@ -751,7 +741,7 @@
                         <div class="info-item"><span class="info-icon">👥</span><span class="info-value">60명</span></div>
                         <div class="info-item"><span class="info-icon">📐</span><span class="info-value">99㎡ (30평)</span></div>
                         <div class="info-item"><span class="info-icon">💬</span><span class="info-value">리뷰 51개</span></div>
-                        <div class="info-item"><span class="info-icon">🕐</span><span class="info-value">확인 필요</span></div>
+                        <div class="info-item"><span class="info-icon">🕐</span><span class="info-value">19~9시</span></div>
                     </div>
                     <div class="card-review">
                         <strong>내 평가:</strong> 소음 완전 자유! 노래방 기계 완비. 리뷰51 찜427 인기 검증. 30평에 60명 수용. 취사 가능.
