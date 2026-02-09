@@ -397,6 +397,7 @@
                 <button class="sort-btn active" onclick="sortTable('default')">기본</button>
                 <button class="sort-btn" onclick="sortTable('price')">비용순</button>
                 <button class="sort-btn" onclick="sortTable('area')">면적순</button>
+                <button class="sort-btn" onclick="sortTable('review')">리뷰순</button>
             </div>
             <div class="table-scroll">
                 <table class="data-table">
@@ -905,6 +906,13 @@
                     const areaA = parseInt(a.cells[5].textContent.replace(/[^0-9]/g, ''));
                     const areaB = parseInt(b.cells[5].textContent.replace(/[^0-9]/g, ''));
                     return areaB - areaA;
+                });
+                rows.forEach(row => tbody.appendChild(row));
+            } else if (type === 'review') {
+                rows.sort((a, b) => {
+                    const reviewA = parseInt(a.cells[6].textContent.match(/리뷰(\d+)/)?.[1] || 0);
+                    const reviewB = parseInt(b.cells[6].textContent.match(/리뷰(\d+)/)?.[1] || 0);
+                    return reviewB - reviewA;
                 });
                 rows.forEach(row => tbody.appendChild(row));
             }
