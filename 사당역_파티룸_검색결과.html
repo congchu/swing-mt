@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사당역 파티룸 검색결과</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        /* 뷰 토글 */
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .view-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        .view-btn.active {
+            background: white;
+            color: #6200ea;
+        }
+        .view-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* 점수 기준표 */
+        .scoring {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .scoring h2 { color: #6200ea; margin-bottom: 15px; font-size: 18px; }
+        .scoring-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            font-size: 12px;
+        }
+        .scoring-item {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .scoring-item strong { color: #6200ea; display: block; margin-bottom: 5px; }
+
+        /* TOP 3 배너 */
+        .top3 {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .top3 h2 { color: #6200ea; margin-bottom: 15px; font-size: 18px; }
+        .top3-list { display: flex; gap: 15px; flex-wrap: wrap; }
+        .top3-item {
+            flex: 1; min-width: 200px;
+            padding: 15px; border-radius: 12px; text-align: center;
+        }
+        .top3-item.gold { background: linear-gradient(135deg, #fff9c4 0%, #ffecb3 100%); }
+        .top3-item.silver { background: linear-gradient(135deg, #eceff1 0%, #cfd8dc 100%); }
+        .top3-item.bronze { background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%); }
+        .top3-rank { font-size: 24px; font-weight: bold; }
+        .top3-name { font-size: 14px; font-weight: 600; margin: 5px 0; }
+        .top3-price { color: #d32f2f; font-weight: bold; font-size: 16px; }
+        .top3-size { font-size: 12px; color: #666; }
+        .top3-score { font-size: 12px; color: #6200ea; font-weight: bold; margin-top: 5px; }
+
+        /* ============ 카드 뷰 ============ */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+        .cards.hidden { display: none; }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+        }
+        .card.recommended { border: 3px solid #4caf50; }
+        .card.cheap { border: 3px solid #ff9800; }
+        .card.excluded { opacity: 0.5; border: 2px solid #f44336; }
+
+        .score-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #6200ea 0%, #9c27b0 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .card-images {
+            display: flex;
+            height: 220px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+        .card-images::-webkit-scrollbar { display: none; }
+        .card-images img {
+            min-width: 50%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            scroll-snap-align: start;
+            transition: opacity 0.3s;
+        }
+        .card-images img:hover { opacity: 0.9; }
+
+        .card-body { padding: 20px; }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .card-title { font-size: 16px; font-weight: 700; color: #333; flex: 1; }
+        .card-price {
+            font-size: 20px; font-weight: 800; color: #d32f2f;
+            white-space: nowrap; margin-left: 10px;
+        }
+
+        .card-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+        .info-item { display: flex; align-items: center; gap: 6px; }
+        .info-icon { width: 20px; text-align: center; }
+        .info-value { font-weight: 600; color: #333; }
+
+        .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .badge-green { background: #e8f5e9; color: #2e7d32; }
+        .badge-orange { background: #fff3e0; color: #e65100; }
+        .badge-blue { background: #e3f2fd; color: #1565c0; }
+        .badge-red { background: #ffebee; color: #c62828; }
+        .badge-purple { background: #f3e5f5; color: #7b1fa2; }
+
+        .source-info {
+            background: #fafafa;
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        .source-info strong { color: #333; }
+
+        .owner-appeal {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: #333;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        .owner-appeal strong { color: #2e7d32; }
+
+        .card-review {
+            background: #f8f9fa;
+            border-left: 4px solid #6200ea;
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .card-links { display: flex; gap: 10px; margin-top: 15px; }
+        .btn {
+            flex: 1; padding: 12px; border-radius: 8px;
+            text-align: center; text-decoration: none;
+            font-weight: 600; font-size: 13px; transition: all 0.3s;
+        }
+        .btn-primary { background: #6200ea; color: white; }
+        .btn-primary:hover { background: #4a00b0; }
+        .btn-secondary { background: #f5f5f5; color: #333; }
+        .btn-secondary:hover { background: #e0e0e0; }
+
+        /* ============ 테이블 뷰 ============ */
+        .table-view {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .table-view.hidden { display: none; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .data-table th {
+            background: #6200ea;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .data-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        .data-table tr:hover { background: #f5f5f5; }
+        .data-table tr.excluded {
+            background: #ffebee;
+            opacity: 0.6;
+        }
+        .data-table .score-cell {
+            font-weight: bold;
+            color: #6200ea;
+            font-size: 16px;
+        }
+        .data-table .price-cell {
+            font-weight: bold;
+            color: #d32f2f;
+        }
+        .data-table .name-cell {
+            font-weight: 600;
+        }
+        .data-table .name-cell a {
+            color: #333;
+            text-decoration: none;
+        }
+        .data-table .name-cell a:hover {
+            color: #6200ea;
+            text-decoration: underline;
+        }
+        .data-table .thumb-cell {
+            padding: 6px;
+        }
+        .data-table .thumb-cell img {
+            width: 80px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .data-table .thumb-cell img:hover {
+            transform: scale(1.1);
+        }
+        .data-table .badge-sm {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            margin: 1px;
+        }
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        /* 하단 노트 */
+        .notes {
+            background: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 라이트박스 모달 */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .lightbox.active { display: flex; }
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .lightbox img {
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: 8px;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            padding: 10px;
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            padding: 20px;
+            user-select: none;
+        }
+        .lightbox-prev { left: -60px; }
+        .lightbox-next { right: -60px; }
+        .lightbox-counter {
+            color: white;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .lightbox-title {
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .cards { grid-template-columns: 1fr; }
+            .data-table { font-size: 11px; }
+            .data-table th, .data-table td { padding: 8px 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 사당역 파티룸 검색결과</h1>
+        <p class="subtitle">35인 MT 기준 | 올나잇 패키지 가격 비교</p>
+
+        <!-- 뷰 토글 버튼 -->
+        <div class="view-toggle">
+            <button class="view-btn active" onclick="showView('card')">📋 카드로 보기</button>
+            <button class="view-btn" onclick="showView('table')">📊 표로 보기</button>
+        </div>
+
+        <!-- 점수 기준표 -->
+        <div class="scoring">
+            <h2>📊 점수 기준표 (100점 만점)</h2>
+            <div class="scoring-grid">
+                <div class="scoring-item">
+                    <strong>면적 (30점)</strong>
+                    70평↑: 30점<br>
+                    40평↑: 25점<br>
+                    30평↑: 20점<br>
+                    30평↓: 15점
+                </div>
+                <div class="scoring-item">
+                    <strong>가격 (25점)</strong>
+                    35만↓: 25점<br>
+                    42만↓: 20점<br>
+                    45만↓: 15점<br>
+                    45만↑: 10점
+                </div>
+                <div class="scoring-item">
+                    <strong>화장실 (20점)</strong>
+                    내부(남녀분리): 20점<br>
+                    내부: 15점<br>
+                    외부: 10점
+                </div>
+                <div class="scoring-item">
+                    <strong>거울 (10점)</strong>
+                    전신거울 있음: 10점<br>
+                    없음: 0점
+                </div>
+                <div class="scoring-item">
+                    <strong>교통 (10점)</strong>
+                    3분 이내: 10점<br>
+                    5분 이내: 7점<br>
+                    그 외: 5점
+                </div>
+                <div class="scoring-item">
+                    <strong>주차 (5점)</strong>
+                    가능: 5점<br>
+                    불가: 0점
+                </div>
+            </div>
+        </div>
+
+        <!-- TOP 3 -->
+        <div class="top3">
+            <h2>🏆 종합 점수 TOP 3</h2>
+            <div class="top3-list">
+                <div class="top3-item gold">
+                    <div class="top3-rank">🥇</div>
+                    <div class="top3-name">사당하이퍼</div>
+                    <div class="top3-price">340,000원</div>
+                    <div class="top3-size">75평 / 99+명</div>
+                    <div class="top3-score">92점</div>
+                </div>
+                <div class="top3-item silver">
+                    <div class="top3-rank">🥈</div>
+                    <div class="top3-name">오션스타</div>
+                    <div class="top3-price">420,000원</div>
+                    <div class="top3-size">45평 / 60명</div>
+                    <div class="top3-score">82점</div>
+                </div>
+                <div class="top3-item bronze">
+                    <div class="top3-rank">🥉</div>
+                    <div class="top3-name">80명초대형</div>
+                    <div class="top3-price">450,000원</div>
+                    <div class="top3-size">40평 / 80명</div>
+                    <div class="top3-score">77점</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ 테이블 뷰 ============ -->
+        <div class="table-view hidden" id="tableView">
+            <div class="table-scroll">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>썸네일</th>
+                            <th>점수</th>
+                            <th>공간명</th>
+                            <th>35인 비용</th>
+                            <th>면적</th>
+                            <th>최대인원</th>
+                            <th>교통</th>
+                            <th>화장실</th>
+                            <th>거울</th>
+                            <th>주차</th>
+                            <th>특징</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="thumb-cell"><img src="images/사당하이퍼_1.jpg" onclick="openLightbox('사당하이퍼', 0)"></td>
+                            <td class="score-cell">92</td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/75247" target="_blank">🥇 사당하이퍼</a></td>
+                            <td class="price-cell">340,000원</td>
+                            <td>75평</td>
+                            <td>99+명</td>
+                            <td>5분</td>
+                            <td><span class="badge-sm badge-green">내부(남녀분리)</span></td>
+                            <td>✅</td>
+                            <td>❓</td>
+                            <td><span class="badge-sm badge-orange">최저가</span><span class="badge-sm badge-purple">최대규모</span></td>
+                        </tr>
+                        <tr>
+                            <td class="thumb-cell"><img src="images/오션스타_1.jpg" onclick="openLightbox('오션스타', 0)"></td>
+                            <td class="score-cell">82</td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/14887" target="_blank">🥈 오션스타</a></td>
+                            <td class="price-cell">420,000원</td>
+                            <td>45평</td>
+                            <td>60명</td>
+                            <td>5분</td>
+                            <td><span class="badge-sm badge-green">내부</span></td>
+                            <td>✅</td>
+                            <td>✅</td>
+                            <td><span class="badge-sm badge-green">찜1027</span><span class="badge-sm badge-blue">노래방</span></td>
+                        </tr>
+                        <tr>
+                            <td class="thumb-cell"><img src="images/80명초대형_1.jpg" onclick="openLightbox('80명초대형', 0)"></td>
+                            <td class="score-cell">77</td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/76825" target="_blank">🥉 80명초대형</a></td>
+                            <td class="price-cell">450,000원</td>
+                            <td>40평</td>
+                            <td>80명</td>
+                            <td>5분</td>
+                            <td><span class="badge-sm badge-green">내부(남녀분리)</span></td>
+                            <td>✅</td>
+                            <td>✅</td>
+                            <td><span class="badge-sm badge-blue">신규</span><span class="badge-sm badge-purple">100인치</span></td>
+                        </tr>
+                        <tr>
+                            <td class="thumb-cell"><img src="images/더무드_1.jpg" onclick="openLightbox('더무드', 0)"></td>
+                            <td class="score-cell">70</td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/74668" target="_blank">더무드</a></td>
+                            <td class="price-cell">425,000원</td>
+                            <td>30평</td>
+                            <td>60명</td>
+                            <td>3분</td>
+                            <td><span class="badge-sm badge-green">내부</span></td>
+                            <td>✅</td>
+                            <td>❌</td>
+                            <td><span class="badge-sm badge-blue">추가5천원</span></td>
+                        </tr>
+                        <tr>
+                            <td class="thumb-cell"><img src="images/골든아워_1.jpg" onclick="openLightbox('골든아워', 0)"></td>
+                            <td class="score-cell">65</td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/56837" target="_blank">골든아워</a></td>
+                            <td class="price-cell">440,000원</td>
+                            <td>35평</td>
+                            <td>99+명</td>
+                            <td>3분</td>
+                            <td><span class="badge-sm badge-orange">외부*</span></td>
+                            <td>✅</td>
+                            <td>❌</td>
+                            <td><span class="badge-sm badge-purple">소음자유</span><span class="badge-sm badge-blue">JBL</span></td>
+                        </tr>
+                        <tr>
+                            <td class="thumb-cell"><img src="images/소음자유노래방_1.jpg" onclick="openLightbox('소음자유노래방', 0)"></td>
+                            <td class="score-cell">65?</td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/53057" target="_blank">소음자유노래방</a></td>
+                            <td class="price-cell">439,000원</td>
+                            <td>30평</td>
+                            <td>60명</td>
+                            <td>3분</td>
+                            <td><span class="badge-sm badge-orange">확인필요</span></td>
+                            <td>❓</td>
+                            <td>❌</td>
+                            <td><span class="badge-sm badge-purple">소음자유</span><span class="badge-sm badge-blue">노래방</span></td>
+                        </tr>
+                        <tr class="excluded">
+                            <td class="thumb-cell"><img src="images/아이엠파티룸_1.jpg" onclick="openLightbox('아이엠파티룸', 0)"></td>
+                            <td class="score-cell">-</td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/67411" target="_blank">[X] 아이엠파티룸</a></td>
+                            <td class="price-cell">465,000원</td>
+                            <td>25평</td>
+                            <td>40명</td>
+                            <td>1분</td>
+                            <td><span class="badge-sm badge-green">내부(남녀분리)</span></td>
+                            <td>✅</td>
+                            <td>❌</td>
+                            <td><span class="badge-sm badge-red">작음</span></td>
+                        </tr>
+                        <tr class="excluded">
+                            <td class="thumb-cell"><img src="images/사당행_1.jpg" onclick="openLightbox('사당행', 0)"></td>
+                            <td class="score-cell">-</td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/61200" target="_blank">[X] 사당행</a></td>
+                            <td class="price-cell">554,000원</td>
+                            <td>20평</td>
+                            <td>37명</td>
+                            <td>2분</td>
+                            <td>-</td>
+                            <td>✅</td>
+                            <td>❌</td>
+                            <td><span class="badge-sm badge-red">비쌈</span></td>
+                        </tr>
+                        <tr class="excluded">
+                            <td class="thumb-cell"><img src="images/아일랜드이너프_1.jpg" onclick="openLightbox('아일랜드이너프', 0)"></td>
+                            <td class="score-cell">-</td>
+                            <td class="name-cell"><a href="https://www.spacecloud.kr/space/27356" target="_blank">[X] 아일랜드이너프</a></td>
+                            <td class="price-cell">600,000원</td>
+                            <td>43평</td>
+                            <td>50명</td>
+                            <td>300m</td>
+                            <td>-</td>
+                            <td>✅</td>
+                            <td>❌</td>
+                            <td><span class="badge-sm badge-red">비쌈</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============ 카드 뷰 ============ -->
+        <div class="cards" id="cardView">
+
+            <!-- 사당하이퍼 (92점) -->
+            <div class="card cheap">
+                <div class="score-badge">92점</div>
+                <div class="card-images" data-space="사당하이퍼">
+                    <img src="images/사당하이퍼_1.jpg" onclick="openLightbox('사당하이퍼', 0)">
+                    <img src="images/사당하이퍼_2.jpg" onclick="openLightbox('사당하이퍼', 1)">
+                    <img src="images/사당하이퍼_3.jpg" onclick="openLightbox('사당하이퍼', 2)">
+                    <img src="images/사당하이퍼_4.jpg" onclick="openLightbox('사당하이퍼', 3)">
+                </div>
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">[사당하이퍼] 75평 초대형파티룸</div>
+                        <div class="card-price">340,000원</div>
+                    </div>
+                    <div class="badges">
+                        <span class="badge badge-orange">🏆 최저가+최대규모</span>
+                        <span class="badge badge-purple">75평</span>
+                        <span class="badge badge-green">내부화장실(남녀분리)</span>
+                        <span class="badge badge-blue">🪞 전신거울</span>
+                    </div>
+                    <div class="source-info">
+                        <strong>📋 시설정보 (출처: 사당하이퍼.html:43-52)</strong><br>
+                        "내부 화장실" + "남/여 화장실 구분" | 전신거울 있음
+                    </div>
+                    <div class="owner-appeal">
+                        <strong>🏠 주인장 어필:</strong> 사당역 5분 초역세권 대형 파티룸, 취사시설/음향/마이크/TV프로젝터/WIFI 완비
+                    </div>
+                    <div class="card-info">
+                        <div class="info-item"><span class="info-icon">📍</span><span class="info-value">사당역 도보5분</span></div>
+                        <div class="info-item"><span class="info-icon">👥</span><span class="info-value">99+명</span></div>
+                        <div class="info-item"><span class="info-icon">📐</span><span class="info-value">248㎡ (75평)</span></div>
+                        <div class="info-item"><span class="info-icon">⭐</span><span class="info-value">찜 57</span></div>
+                    </div>
+                    <div class="card-review">
+                        <strong>내 평가:</strong> 75평 최대 규모에 340,000원 가성비 최고! 클럽 분위기 보라/파란 조명, 벽돌 인테리어. 35명도 여유롭게 춤출 공간 충분.
+                    </div>
+                    <div class="card-links">
+                        <a href="https://www.spacecloud.kr/space/75247" target="_blank" class="btn btn-primary">스페이스클라우드</a>
+                        <a href="https://blog.naver.com/unuyoonu/224138055982" target="_blank" class="btn btn-secondary">블로그 후기</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 오션스타 (82점) -->
+            <div class="card recommended">
+                <div class="score-badge">82점</div>
+                <div class="card-images" data-space="오션스타">
+                    <img src="images/오션스타_1.jpg" onclick="openLightbox('오션스타', 0)">
+                    <img src="images/오션스타_2.jpg" onclick="openLightbox('오션스타', 1)">
+                    <img src="images/오션스타_3.jpg" onclick="openLightbox('오션스타', 2)">
+                    <img src="images/오션스타_4.jpg" onclick="openLightbox('오션스타', 3)">
+                </div>
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">[신년모임] 사당파티룸 오션스타</div>
+                        <div class="card-price">420,000원</div>
+                    </div>
+                    <div class="badges">
+                        <span class="badge badge-green">⭐ 인기최고 (찜1027)</span>
+                        <span class="badge badge-blue">🎤 노래방</span>
+                        <span class="badge badge-green">내부화장실</span>
+                        <span class="badge badge-purple">🅿️ 주차1대</span>
+                        <span class="badge badge-blue">🪞 전신거울</span>
+                    </div>
+                    <div class="source-info">
+                        <strong>📋 시설정보 (출처: 오션스타.html:37-38)</strong><br>
+                        "내부 화장실" | 전신거울 있음 | 주차 1대 가능
+                    </div>
+                    <div class="owner-appeal">
+                        <strong>🏠 주인장 어필:</strong> "사당역 5분거리 파티룸 🎉 노래방/TV프로젝터/냉난방/취사/음향 완비, 별도 라운지 공간"
+                    </div>
+                    <div class="card-info">
+                        <div class="info-item"><span class="info-icon">📍</span><span class="info-value">사당역 도보5분</span></div>
+                        <div class="info-item"><span class="info-icon">👥</span><span class="info-value">60명</span></div>
+                        <div class="info-item"><span class="info-icon">📐</span><span class="info-value">149㎡ (45평)</span></div>
+                        <div class="info-item"><span class="info-icon">💬</span><span class="info-value">리뷰 44개</span></div>
+                    </div>
+                    <div class="card-review">
+                        <strong>내 평가:</strong> 네이비 인테리어 + 네온사인. 45평 넓은 홀 + 별도 라운지(담요/쿠션 있어서 눕기 가능). 리뷰44 찜1027 압도적 인기!
+                    </div>
+                    <div class="card-links">
+                        <a href="https://www.spacecloud.kr/space/14887" target="_blank" class="btn btn-primary">스페이스클라우드</a>
+                        <a href="https://blog.naver.com/pran0104/221599137743" target="_blank" class="btn btn-secondary">블로그 후기</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 80명초대형 (77점) -->
+            <div class="card">
+                <div class="score-badge">77점</div>
+                <div class="card-images" data-space="80명초대형">
+                    <img src="images/80명초대형_1.jpg" onclick="openLightbox('80명초대형', 0)">
+                    <img src="images/80명초대형_2.jpg" onclick="openLightbox('80명초대형', 1)">
+                    <img src="images/80명초대형_3.jpg" onclick="openLightbox('80명초대형', 2)">
+                </div>
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">[80명가능초대형] 사당파티룸</div>
+                        <div class="card-price">450,000원</div>
+                    </div>
+                    <div class="badges">
+                        <span class="badge badge-blue">🆕 신규오픈</span>
+                        <span class="badge badge-purple">100인치 프로젝터</span>
+                        <span class="badge badge-green">내부화장실(남녀분리)</span>
+                        <span class="badge badge-blue">🪞 전신거울</span>
+                        <span class="badge badge-purple">🅿️ 주차1대</span>
+                    </div>
+                    <div class="source-info">
+                        <strong>📋 시설정보 (출처: [80명가능초대형].html:38-46)</strong><br>
+                        "내부 화장실" + "남/여 화장실 구분" | 전신거울 있음 | 주차 1대 가능
+                    </div>
+                    <div class="owner-appeal">
+                        <strong>🏠 주인장 어필:</strong> "80명 수용 가능 초대형 파티룸, 100인치 프로젝터, 풀컬러 조명 맛집, 음향/마이크/WIFI 완비"
+                    </div>
+                    <div class="card-info">
+                        <div class="info-item"><span class="info-icon">📍</span><span class="info-value">사당역 도보5분</span></div>
+                        <div class="info-item"><span class="info-icon">👥</span><span class="info-value">80명</span></div>
+                        <div class="info-item"><span class="info-icon">📐</span><span class="info-value">132㎡ (40평)</span></div>
+                        <div class="info-item"><span class="info-icon">🅿️</span><span class="info-value">주차 1대</span></div>
+                    </div>
+                    <div class="card-review">
+                        <strong>내 평가:</strong> 신규 오픈! 100인치 프로젝터, 풀컬러 조명 맛집. 40평에 80명 수용. 보증금 10만원 별도.
+                    </div>
+                    <div class="card-links">
+                        <a href="https://www.spacecloud.kr/space/76825" target="_blank" class="btn btn-primary">스페이스클라우드</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 더무드 (70점) -->
+            <div class="card">
+                <div class="score-badge">70점</div>
+                <div class="card-images" data-space="더무드">
+                    <img src="images/더무드_1.jpg" onclick="openLightbox('더무드', 0)">
+                    <img src="images/더무드_2.jpg" onclick="openLightbox('더무드', 1)">
+                    <img src="images/더무드_3.jpg" onclick="openLightbox('더무드', 2)">
+                    <img src="images/더무드_4.jpg" onclick="openLightbox('더무드', 3)">
+                </div>
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">[대규모가성비] 더무드 사당 파티룸</div>
+                        <div class="card-price">425,000원</div>
+                    </div>
+                    <div class="badges">
+                        <span class="badge badge-blue">추가인원비 5,000원</span>
+                        <span class="badge badge-green">내부화장실</span>
+                        <span class="badge badge-blue">🪞 전신거울</span>
+                    </div>
+                    <div class="source-info">
+                        <strong>📋 시설정보 (출처: 더무드.html:57-59)</strong><br>
+                        "내부 화장실" | 전신거울 있음
+                    </div>
+                    <div class="owner-appeal">
+                        <strong>🏠 주인장 어필:</strong> "사당역 초역세권, 감성 조명과 커튼이 만들어내는 다양한 무드, 그리고 완벽한 음향·조리 시설까지 — 당신의 모임이 더욱 특별해지는 공간입니다✨"
+                    </div>
+                    <div class="card-info">
+                        <div class="info-item"><span class="info-icon">📍</span><span class="info-value">사당역 7번출구 3분</span></div>
+                        <div class="info-item"><span class="info-icon">👥</span><span class="info-value">60명</span></div>
+                        <div class="info-item"><span class="info-icon">📐</span><span class="info-value">99㎡ (30평)</span></div>
+                        <div class="info-item"><span class="info-icon">⭐</span><span class="info-value">찜 32</span></div>
+                    </div>
+                    <div class="card-review">
+                        <strong>내 평가:</strong> 깔끔한 화이트톤 인테리어, 접이식 테이블/의자로 배치 자유로움. 추가인원비 5,000원으로 저렴! 3분 초역세권.
+                    </div>
+                    <div class="card-links">
+                        <a href="https://www.spacecloud.kr/space/74668" target="_blank" class="btn btn-primary">스페이스클라우드</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 골든아워 (65점) -->
+            <div class="card">
+                <div class="score-badge">65점</div>
+                <div class="card-images" data-space="골든아워">
+                    <img src="images/골든아워_1.jpg" onclick="openLightbox('골든아워', 0)">
+                    <img src="images/골든아워_2.jpg" onclick="openLightbox('골든아워', 1)">
+                    <img src="images/골든아워_3.jpg" onclick="openLightbox('골든아워', 2)">
+                    <img src="images/골든아워_4.jpg" onclick="openLightbox('골든아워', 3)">
+                </div>
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">[대형모임] 골든아워 사당파티룸</div>
+                        <div class="card-price">440,000원</div>
+                    </div>
+                    <div class="badges">
+                        <span class="badge badge-purple">🔊 소음자유</span>
+                        <span class="badge badge-blue">🎧 JBL 스피커</span>
+                        <span class="badge badge-orange">외부화장실(남녀공용)*</span>
+                        <span class="badge badge-blue">🪞 전신거울</span>
+                    </div>
+                    <div class="source-info">
+                        <strong>📋 시설정보 (출처: 골든아워.html:39-46)</strong><br>
+                        스페이스클라우드: "내부 화장실" + "남/여 화장실 구분" | 전신거울 있음<br>
+                        <em>*사용자 확인 결과: 외부(남녀공용)으로 표기</em>
+                    </div>
+                    <div class="owner-appeal">
+                        <strong>🏠 주인장 어필:</strong> "대형 모임을 위한 파티룸, JBL 파티박스 스피커, 마이크 4개, 디제잉 가능, 소음 완전 자유, 누적 3000명 이용"
+                    </div>
+                    <div class="card-info">
+                        <div class="info-item"><span class="info-icon">📍</span><span class="info-value">사당역 5번출구 3분</span></div>
+                        <div class="info-item"><span class="info-icon">👥</span><span class="info-value">99+명</span></div>
+                        <div class="info-item"><span class="info-icon">📐</span><span class="info-value">116㎡ (35평)</span></div>
+                        <div class="info-item"><span class="info-icon">💬</span><span class="info-value">리뷰 20개</span></div>
+                    </div>
+                    <div class="card-review">
+                        <strong>내 평가:</strong> 소음 완전 자유! JBL 파티박스 스피커, 마이크 4개. 디제잉 가능. 누적 3000명 이용. 보증금 5만원 별도.
+                    </div>
+                    <div class="card-links">
+                        <a href="https://www.spacecloud.kr/space/56837" target="_blank" class="btn btn-primary">스페이스클라우드</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 소음자유노래방 (65점 추정) -->
+            <div class="card">
+                <div class="score-badge">65점?</div>
+                <div class="card-images" data-space="소음자유노래방">
+                    <img src="images/소음자유노래방_1.jpg" onclick="openLightbox('소음자유노래방', 0)">
+                    <img src="images/소음자유노래방_2.jpg" onclick="openLightbox('소음자유노래방', 1)">
+                </div>
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">[새해할인] 사당파티룸 소음자유노래방</div>
+                        <div class="card-price">439,000원</div>
+                    </div>
+                    <div class="badges">
+                        <span class="badge badge-purple">🔊 소음자유</span>
+                        <span class="badge badge-blue">🎤 노래방</span>
+                    </div>
+                    <div class="source-info">
+                        <strong>📋 시설정보</strong><br>
+                        소스 파일 없음 - 스페이스클라우드에서 직접 확인 필요
+                    </div>
+                    <div class="owner-appeal">
+                        <strong>🏠 주인장 어필:</strong> "소음 완전 자유! 노래방 기계 완비. 대규모 파티/모임 가능"
+                    </div>
+                    <div class="card-info">
+                        <div class="info-item"><span class="info-icon">📍</span><span class="info-value">사당역 7/10번출구 3분</span></div>
+                        <div class="info-item"><span class="info-icon">👥</span><span class="info-value">60명</span></div>
+                        <div class="info-item"><span class="info-icon">📐</span><span class="info-value">99㎡ (30평)</span></div>
+                        <div class="info-item"><span class="info-icon">💬</span><span class="info-value">리뷰 51개</span></div>
+                    </div>
+                    <div class="card-review">
+                        <strong>내 평가:</strong> 소음 완전 자유! 노래방 기계 완비. 리뷰51 찜427 인기 검증. 30평에 60명 수용. 취사 가능.
+                    </div>
+                    <div class="card-links">
+                        <a href="https://www.spacecloud.kr/space/53057" target="_blank" class="btn btn-primary">스페이스클라우드</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 제외: 아이엠파티룸 (작음) -->
+            <div class="card excluded">
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">[X] 아이엠파티룸 노래가능</div>
+                        <div class="card-price">465,000원</div>
+                    </div>
+                    <div class="badges">
+                        <span class="badge badge-red">❌ 제외: 25평으로 작음</span>
+                    </div>
+                    <div class="card-info">
+                        <div class="info-item"><span class="info-icon">📍</span><span class="info-value">내방역 3번출구 1분</span></div>
+                        <div class="info-item"><span class="info-icon">📐</span><span class="info-value">83㎡ (25평)</span></div>
+                    </div>
+                    <div class="card-links">
+                        <a href="https://www.spacecloud.kr/space/67411" target="_blank" class="btn btn-secondary">스페이스클라우드</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 제외: 사당행 파티룸 -->
+            <div class="card excluded">
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">[X] 사당행 파티룸</div>
+                        <div class="card-price">554,000원</div>
+                    </div>
+                    <div class="badges">
+                        <span class="badge badge-red">❌ 비쌈 + 37명 제한</span>
+                    </div>
+                    <div class="card-info">
+                        <div class="info-item"><span class="info-icon">📍</span><span class="info-value">사당역 10번출구 2분</span></div>
+                        <div class="info-item"><span class="info-icon">📐</span><span class="info-value">66㎡ (20평)</span></div>
+                    </div>
+                    <div class="card-links">
+                        <a href="https://www.spacecloud.kr/space/61200" target="_blank" class="btn btn-secondary">스페이스클라우드</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 제외: 아일랜드이너프 -->
+            <div class="card excluded">
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">[X] 아일랜드이너프 사당점</div>
+                        <div class="card-price">600,000원</div>
+                    </div>
+                    <div class="badges">
+                        <span class="badge badge-red">❌ 비쌈</span>
+                    </div>
+                    <div class="card-info">
+                        <div class="info-item"><span class="info-icon">📍</span><span class="info-value">사당역 300m</span></div>
+                        <div class="info-item"><span class="info-icon">📐</span><span class="info-value">142㎡ (43평)</span></div>
+                    </div>
+                    <div class="card-links">
+                        <a href="https://www.spacecloud.kr/space/27356" target="_blank" class="btn btn-secondary">스페이스클라우드</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="notes">
+            <strong>참고사항</strong><br>
+            • 35인 올나잇 예상비용 기준<br>
+            • 점수 = 면적(30) + 가격(25) + 화장실(20) + 거울(10) + 교통(10) + 주차(5)<br>
+            • 보증금 별도: 골든아워 5만원, 80명초대형 10만원<br>
+            • 화장실 정보는 스페이스클라우드 HTML 소스에서 추출 (출처 명시)<br>
+            • 사진을 좌우로 스크롤하거나 클릭하면 슬라이드로 크게 보기
+        </div>
+    </div>
+
+    <!-- 라이트박스 모달 -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <span class="lightbox-close" onclick="closeLightbox()">×</span>
+            <span class="lightbox-nav lightbox-prev" onclick="prevImage()">❮</span>
+            <div class="lightbox-title" id="lightbox-title"></div>
+            <img id="lightbox-img" src="">
+            <div class="lightbox-counter" id="lightbox-counter"></div>
+            <span class="lightbox-nav lightbox-next" onclick="nextImage()">❯</span>
+        </div>
+    </div>
+
+    <script>
+        // 뷰 토글
+        function showView(type) {
+            const cardView = document.getElementById('cardView');
+            const tableView = document.getElementById('tableView');
+            const buttons = document.querySelectorAll('.view-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (type === 'card') {
+                cardView.classList.remove('hidden');
+                tableView.classList.add('hidden');
+                buttons[0].classList.add('active');
+            } else {
+                cardView.classList.add('hidden');
+                tableView.classList.remove('hidden');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        // 라이트박스
+        const spaceImages = {
+            '사당하이퍼': ['images/사당하이퍼_1.jpg', 'images/사당하이퍼_2.jpg', 'images/사당하이퍼_3.jpg', 'images/사당하이퍼_4.jpg'],
+            '오션스타': ['images/오션스타_1.jpg', 'images/오션스타_2.jpg', 'images/오션스타_3.jpg', 'images/오션스타_4.jpg'],
+            '더무드': ['images/더무드_1.jpg', 'images/더무드_2.jpg', 'images/더무드_3.jpg', 'images/더무드_4.jpg'],
+            '소음자유노래방': ['images/소음자유노래방_1.jpg', 'images/소음자유노래방_2.jpg'],
+            '골든아워': ['images/골든아워_1.jpg', 'images/골든아워_2.jpg', 'images/골든아워_3.jpg', 'images/골든아워_4.jpg'],
+            '80명초대형': ['images/80명초대형_1.jpg', 'images/80명초대형_2.jpg', 'images/80명초대형_3.jpg']
+        };
+
+        let currentSpace = '';
+        let currentIndex = 0;
+
+        function openLightbox(space, index) {
+            currentSpace = space;
+            currentIndex = index;
+            updateLightbox();
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function updateLightbox() {
+            const images = spaceImages[currentSpace];
+            document.getElementById('lightbox-img').src = images[currentIndex];
+            document.getElementById('lightbox-title').textContent = currentSpace;
+            document.getElementById('lightbox-counter').textContent = `${currentIndex + 1} / ${images.length}`;
+        }
+
+        function prevImage() {
+            const images = spaceImages[currentSpace];
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateLightbox();
+        }
+
+        function nextImage() {
+            const images = spaceImages[currentSpace];
+            currentIndex = (currentIndex + 1) % images.length;
+            updateLightbox();
+        }
+
+        // 키보드 네비게이션
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('lightbox').classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') prevImage();
+            if (e.key === 'ArrowRight') nextImage();
+        });
+
+        // 배경 클릭시 닫기
+        document.getElementById('lightbox').addEventListener('click', (e) => {
+            if (e.target.id === 'lightbox') closeLightbox();
+        });
+    </script>
+</body>
+</html>
